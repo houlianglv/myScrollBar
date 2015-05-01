@@ -1,10 +1,13 @@
 # myScrollBar
 Customize the scroll bar of our web pages!
+
 You can use myScrollBar.js to add your custom scroll bar.
 
 ## Dependencies:
 jquery 1.x (for IE support).
+
 jquery 2.x (cannot support IE < 9).
+
 jquery.mousewhell.min.js. For support mousewheel event.
 
 ## Usage:
