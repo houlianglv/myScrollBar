@@ -1,0 +1,239 @@
+//add dragScroll to $. make scrollbar draggable.
+(function($) {
+  $.fn.dragScroll = function(opt, mdfunc, mmfunc, mufunc) {
+    var $el = this,
+      $window = $(window),
+      documentHeight = $(document).height();
+    return $el.on("mousedown", function(e) {
+      var $drag = $(this).addClass('draggable');
+      var z_idx = $drag.css('z-index'),
+        oldY = e.clientY,
+        windowScrollY = $window.scrollTop();
+      $(document).on("mousemove", function(e) {
+        if (e.clientY - oldY > 30 || e.clientY - oldY < -30) {
+          var newTop = $drag.position().top + e.clientY - oldY;
+          newTop = newTop < 0 ? 0 : newTop;
+          newTop = newTop + $drag.outerHeight() > $window.height() ? $window.height() - $drag.outerHeight() : newTop;
+          $('.draggable').css("top", newTop + "px");
+          //console.log(newTop);
+          var diff = documentHeight * (e.clientY - oldY) / $window.height();
+          $window.scrollTop($window.scrollTop() + diff);
+          oldY = e.clientY;
+        }
+        e.preventDefault(); // disable selection
+      }).on("mouseup", function(event) {
+        $drag.removeClass('draggable').css('z-index', z_idx);
+        $(document).off("mousemove");
+        $(document).off("mouseup");
+      });
+      e.preventDefault(); // disable selection
+    });
+  };
+})(jQuery);
+
+(function($) {
+  var $scrollbar = $("<div class='scrollbar'></div>"),
+    $bar = $("<div class='bar'></div>"),
+    $window = $(window),
+    $document = $(document),
+    windowHeight = $window.height(),
+    documentHeight = $document.height(),
+    resizeHandler, scrollHandler, clickBarHandler, dblClickHandler,
+    mousewheelHandler, keypressHandler, keyMap,
+    myScrollBar;
+  //event handler
+  resizeHandler = function(event) {
+    var windowHeight = $window.height(),
+      documentHeight = $document.height(),
+      newHeight = windowHeight * windowHeight / documentHeight,
+      newTop = windowHeight * $window.scrollTop() / documentHeight;
+    $bar.css({
+      height: newHeight + 'px',
+      top: newTop + 'px'
+    });
+  };
+  clickBarHandler = function(event) {
+    var clickY = event.clientY,
+      barTop = parseInt($bar.css("top"), 10),
+      barBottom = barTop + parseInt($bar.css("height"), 10),
+      barHeight = barBottom - barTop,
+      scrollTop = $window.scrollTop(),
+      windowHeight = $window.height();
+    if (clickY < barTop) {
+      if (barTop > barHeight) {
+        $bar.css("top", barTop - barHeight + "px");
+        $window.scrollTop(scrollTop - windowHeight);
+      } else {
+        $bar.css("top", "0px");
+        $window.scrollTop(0);
+      }
+    } else if (clickY > barBottom) {
+      if (windowHeight - barBottom > barHeight) {
+        $bar.css("top", barTop + barHeight + "px");
+        $window.scrollTop(scrollTop + windowHeight);
+      } else {
+        $bar.css("top", windowHeight - barHeight + "px");
+        $bar.css("bottom", "0px");
+        $window.scrollTop($document.height() - windowHeight);
+      }
+    }
+    event.preventDefault();
+    event.stopPropagation();
+  };
+  dblClickHandler = function(event) {
+    var clickY = event.clientY,
+      barTop = parseInt($bar.css("top"), 10),
+      barBottom = barTop + parseInt($bar.css("height"), 10),
+      barHeight = barBottom - barTop,
+      clientHeight = $document.height(),
+      windowHeight = $window.height(),
+      newTop;
+
+    if (clickY > barHeight * 0.5 && windowHeight - clickY > barHeight * 0.5) {
+      newTop = clickY - barHeight * 0.5;
+      $bar.css("top", newTop + "px");
+      $window.scrollTop(clientHeight * newTop / windowHeight);
+    } else if (clickY <= barHeight * 0.5) {
+      $bar.css("top", "0px");
+      $window.scrollTop(0);
+    } else {
+      $bar.css("top", windowHeight - barHeight + "px");
+      $window.scrollTop(clientHeight - windowHeight);
+    }
+    event.preventDefault();
+    event.stopPropagation();
+  };
+  mousewheelHandler = function(event) {
+    var delta, newScrollTop, newTop;
+    delta = -150 * event.deltaY;
+    $window.scrollTop($window.scrollTop() + delta);
+    newScrollTop = $window.scrollTop();
+    newTop = $window.height() * newScrollTop / $document.height();
+    $bar.css('top', newTop + 'px');
+  };
+  keyMap = {
+    //page up
+    33: function(e) {
+      var windowHeight = $window.height(),
+        barHeight = $bar.outerHeight(),
+        top = $bar.position().top;
+      if (top > barHeight) {
+        $bar.css('top', top - barHeight + "px");
+        $window.scrollTop($window.scrollTop() - windowHeight);
+      } else {
+        $bar.css('top', "0px");
+        $window.scrollTop(0);
+      }
+    },
+    //page down
+    34: function(e) {
+      var windowHeight = $window.height(),
+        barHeight = $bar.outerHeight(),
+        top = $bar.position().top;
+      if (top + 2 * barHeight < windowHeight) {
+        $bar.css('top', top + barHeight + "px");
+        $window.scrollTop($window.scrollTop() + windowHeight);
+      } else {
+        $bar.css('top', windowHeight - barHeight + "px");
+        $window.scrollTop($document.height() - windowHeight);
+      }
+    },
+    //up
+    38: function(e) {
+      var windowHeight = $window.height(),
+        documentHeight = $document.height(),
+        step = 0.15 * windowHeight,
+        barStep = windowHeight * step / documentHeight,
+        top = $bar.position().top,
+        scrollTop = $window.scrollTop();
+      if (scrollTop > step) {
+        $bar.css('top', top - barStep + "px");
+        $window.scrollTop(scrollTop - step);
+      } else {
+        $bar.css('top', "0px");
+        $window.scrollTop(0);
+      }
+    },
+    //down
+    40: function(e) {
+      var windowHeight = $window.height(),
+        documentHeight = $document.height(),
+        step = 0.15 * windowHeight,
+        barStep = windowHeight * step / documentHeight,
+        top = $bar.position().top,
+        barHeight = $bar.outerHeight(),
+        scrollTop = $window.scrollTop();
+      if (scrollTop + step + windowHeight < documentHeight) {
+        $bar.css('top', top + barStep + "px");
+        $window.scrollTop($window.scrollTop() + step);
+      } else {
+        $bar.css('top', windowHeight - barHeight + "px");
+        $window.scrollTop(documentHeight - windowHeight);
+      }
+    }
+  };
+  keydownHandler = function(event) {
+    keyMap[event.keyCode] && keyMap[event.keyCode](event);
+  };
+  myScrollBar = function(CSSOption) {
+    //set initial css of scroll bar
+    CSSOption = CSSOption || {};
+    $scrollbar.css({
+      "position": 'fixed',
+      "top": '0',
+      "right": '0',
+      "height": "100%",
+      "width": CSSOption["width"] || "10px",
+      "webkitUserSelect": "none",
+      "background-color": CSSOption["backgroundColor"] || "black",
+      "opacity": CSSOption["nohoverOpacity"] || "0.1"
+    });
+    $scrollbar.hover(function() {
+      $scrollbar.css({
+        "opacity": CSSOption["hoverOpacity"] || '0.5',
+        "width": CSSOption["hoverWidth"] || '20px'
+      });
+      $bar.css({
+        "left": '10%',
+        "width": '80%'
+      });
+    }, function() {
+      $scrollbar.css({
+        "opacity": CSSOption["nohoverOpacity"] || '0.1',
+        "width": CSSOption["width"] || '10px'
+      });
+      $bar.css({
+        "left": '10%',
+        "width": '80%'
+      });
+    });
+    $bar.css({
+      "position": 'absolute',
+      "left": '10%',
+      "width": '80%',
+      "height": 100 * windowHeight / documentHeight + "%",
+      "background-color": CSSOption["barBackgroundColor"] || "#d1bbff",
+      "border-radius": CSSOption["barBorderRadius"] || "5px",
+      "top": $window.height() * $window.scrollTop() / documentHeight + "px"
+    });
+    setTimeout(function() {
+      $bar.css("top", $window.height() * $window.scrollTop() / documentHeight + "px");
+    }, 100);
+    //register event handler
+    $window.resize(resizeHandler);
+    $scrollbar.click(clickBarHandler);
+    $scrollbar.dblclick(dblClickHandler);
+    $document.on('mousewheel', mousewheelHandler);
+    $document.keydown(keydownHandler);
+    $bar.dragScroll();
+    //remove default scrollbar
+    if ($window.height() < $document.height()) {
+      $('body').css("overflowY", "hidden");
+      //add our scroll bar
+      $scrollbar.append($bar);
+      $('body').append($scrollbar);
+    }
+  };
+  $.fn.myScrollBar = myScrollBar;
+}(jQuery));
+
