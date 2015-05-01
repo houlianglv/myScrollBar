@@ -9,7 +9,8 @@ jquery.mousewhell.min.js. For support mousewheel event.
 
 Usage:
   Example:
-  "<html>
+```html
+  <html>
     <head>
       <meta charset="utf-8">
       <title>My Scroll Bar</title>
@@ -38,4 +39,5 @@ Usage:
         });
       </script>
     </body>
-  </html>"
+  </html>
+```
