@@ -32,10 +32,11 @@
 })(jQuery);
 
 (function($) {
+  var isInitialized = false,
+    $scrollbar = $("<div class='scrollbar'></div>"),
+    $bar = $("<div class='bar'></div>");
   $.fn.myScrollBar = function(CSSOption) {
-    var $scrollbar = $("<div class='scrollbar'></div>"),
-      $bar = $("<div class='bar'></div>"),
-      $window = $(window),
+    var $window = $(window),
       $document = $(document),
       windowHeight = $window.height(),
       documentHeight = $document.height(),
@@ -43,127 +44,143 @@
       clickBarHandler, dblClickHandler,
       mousewheelHandler, keypressHandler, keyMap,
       myScrollBar;
-    //event handler
-    resizeHandler = function(event) {
-      var windowHeight = $window.height(),
-        documentHeight = $document.height(),
-        newHeight = windowHeight * windowHeight / documentHeight,
-        newTop = windowHeight * $window.scrollTop() / documentHeight;
-      $bar.css({
-        height: newHeight + 'px',
-        top: newTop + 'px'
-      });
-    };
-    windowScrollHandler = function(event) {
-      var windowHeight = $window.height(),
-        documentHeight = $document.height();
-      $bar.css('top', windowHeight * $window.scrollTop() / documentHeight + 'px');
-    };
-    clickBarHandler = function(event) {
-      var clickY = event.clientY,
-        barTop = parseInt($bar.css("top"), 10),
-        barBottom = barTop + parseInt($bar.css("height"), 10),
-        barHeight = barBottom - barTop,
-        scrollTop = $window.scrollTop(),
-        windowHeight = $window.height();
-      if (clickY < barTop) {
-        if (barTop > barHeight) {
-          $window.scrollTop(scrollTop - windowHeight);
-        } else {
-          $window.scrollTop(0);
-        }
-      } else if (clickY > barBottom) {
-        if (windowHeight - barBottom > barHeight) {
-          $window.scrollTop(scrollTop + windowHeight);
-        } else {
-          $window.scrollTop($document.height() - windowHeight);
-        }
-      }
-      event.preventDefault();
-      event.stopPropagation();
-    };
-    dblClickHandler = function(event) {
-      var clickY = event.clientY,
-        barTop = parseInt($bar.css("top"), 10),
-        barBottom = barTop + parseInt($bar.css("height"), 10),
-        barHeight = barBottom - barTop,
-        clientHeight = $document.height(),
-        windowHeight = $window.height(),
-        newTop;
 
-      if (clickY > barHeight * 0.5 && windowHeight - clickY > barHeight * 0.5) {
-        newTop = clickY - barHeight * 0.5;
-        $window.scrollTop(clientHeight * newTop / windowHeight);
-      } else if (clickY <= barHeight * 0.5) {
-        $window.scrollTop(0);
-      } else {
-        $window.scrollTop(clientHeight - windowHeight);
-      }
-      event.preventDefault();
-      event.stopPropagation();
-    };
-    mousewheelHandler = function(event) {
-      var delta, newScrollTop, newTop;
-      delta = -150 * event.deltaY;
-      $window.scrollTop($window.scrollTop() + delta);
-    };
-    keyMap = {
-      //page up
-      33: function(e) {
-        var windowHeight = $window.height(),
-          barHeight = $bar.outerHeight(),
-          top = $bar.position().top;
-        if (top > barHeight) {
-          $window.scrollTop($window.scrollTop() - windowHeight);
-        } else {
-          $window.scrollTop(0);
-        }
-      },
-      //page down
-      34: function(e) {
-        var windowHeight = $window.height(),
-          barHeight = $bar.outerHeight(),
-          top = $bar.position().top;
-        if (top + 2 * barHeight < windowHeight) {
-          $window.scrollTop($window.scrollTop() + windowHeight);
-        } else {
-          $window.scrollTop($document.height() - windowHeight);
-        }
-      },
-      //up
-      38: function(e) {
+    if (!isInitialized) {
+      isInitialized = true;
+      //event handler
+      resizeHandler = function(event) {
         var windowHeight = $window.height(),
           documentHeight = $document.height(),
-          step = 0.15 * windowHeight,
-          barStep = windowHeight * step / documentHeight,
-          top = $bar.position().top,
-          scrollTop = $window.scrollTop();
-        if (scrollTop > step) {
-          $window.scrollTop(scrollTop - step);
-        } else {
-          $window.scrollTop(0);
-        }
-      },
-      //down
-      40: function(e) {
+          newHeight = windowHeight * windowHeight / documentHeight,
+          newTop = windowHeight * $window.scrollTop() / documentHeight;
+        $bar.css({
+          height: newHeight + 'px',
+          top: newTop + 'px'
+        });
+      };
+      windowScrollHandler = function(event) {
         var windowHeight = $window.height(),
-          documentHeight = $document.height(),
-          step = 0.15 * windowHeight,
-          barStep = windowHeight * step / documentHeight,
-          top = $bar.position().top,
-          barHeight = $bar.outerHeight(),
-          scrollTop = $window.scrollTop();
-        if (scrollTop + step + windowHeight < documentHeight) {
-          $window.scrollTop($window.scrollTop() + step);
-        } else {
-          $window.scrollTop(documentHeight - windowHeight);
+          documentHeight = $document.height();
+        $bar.css('top', windowHeight * $window.scrollTop() / documentHeight + 'px');
+      };
+      clickBarHandler = function(event) {
+        var clickY = event.clientY,
+          barTop = parseInt($bar.css("top"), 10),
+          barBottom = barTop + parseInt($bar.css("height"), 10),
+          barHeight = barBottom - barTop,
+          scrollTop = $window.scrollTop(),
+          windowHeight = $window.height();
+        if (clickY < barTop) {
+          if (barTop > barHeight) {
+            $window.scrollTop(scrollTop - windowHeight);
+          } else {
+            $window.scrollTop(0);
+          }
+        } else if (clickY > barBottom) {
+          if (windowHeight - barBottom > barHeight) {
+            $window.scrollTop(scrollTop + windowHeight);
+          } else {
+            $window.scrollTop($document.height() - windowHeight);
+          }
         }
-      }
-    };
-    keydownHandler = function(event) {
-      keyMap[event.keyCode] && keyMap[event.keyCode](event);
-    };
+        event.preventDefault();
+        event.stopPropagation();
+      };
+      dblClickHandler = function(event) {
+        var clickY = event.clientY,
+          barTop = parseInt($bar.css("top"), 10),
+          barBottom = barTop + parseInt($bar.css("height"), 10),
+          barHeight = barBottom - barTop,
+          clientHeight = $document.height(),
+          windowHeight = $window.height(),
+          newTop;
 
+        if (clickY > barHeight * 0.5 && windowHeight - clickY > barHeight * 0.5) {
+          newTop = clickY - barHeight * 0.5;
+          $window.scrollTop(clientHeight * newTop / windowHeight);
+        } else if (clickY <= barHeight * 0.5) {
+          $window.scrollTop(0);
+        } else {
+          $window.scrollTop(clientHeight - windowHeight);
+        }
+        event.preventDefault();
+        event.stopPropagation();
+      };
+      mousewheelHandler = function(event) {
+        var delta, newScrollTop, newTop;
+        delta = -150 * event.deltaY;
+        $window.scrollTop($window.scrollTop() + delta);
+      };
+      keyMap = {
+        //page up
+        33: function(e) {
+          var windowHeight = $window.height(),
+            barHeight = $bar.outerHeight(),
+            top = $bar.position().top;
+          if (top > barHeight) {
+            $window.scrollTop($window.scrollTop() - windowHeight);
+          } else {
+            $window.scrollTop(0);
+          }
+        },
+        //page down
+        34: function(e) {
+          var windowHeight = $window.height(),
+            barHeight = $bar.outerHeight(),
+            top = $bar.position().top;
+          if (top + 2 * barHeight < windowHeight) {
+            $window.scrollTop($window.scrollTop() + windowHeight);
+          } else {
+            $window.scrollTop($document.height() - windowHeight);
+          }
+        },
+        //up
+        38: function(e) {
+          var windowHeight = $window.height(),
+            documentHeight = $document.height(),
+            step = 0.15 * windowHeight,
+            barStep = windowHeight * step / documentHeight,
+            top = $bar.position().top,
+            scrollTop = $window.scrollTop();
+          if (scrollTop > step) {
+            $window.scrollTop(scrollTop - step);
+          } else {
+            $window.scrollTop(0);
+          }
+        },
+        //down
+        40: function(e) {
+          var windowHeight = $window.height(),
+            documentHeight = $document.height(),
+            step = 0.15 * windowHeight,
+            barStep = windowHeight * step / documentHeight,
+            top = $bar.position().top,
+            barHeight = $bar.outerHeight(),
+            scrollTop = $window.scrollTop();
+          if (scrollTop + step + windowHeight < documentHeight) {
+            $window.scrollTop($window.scrollTop() + step);
+          } else {
+            $window.scrollTop(documentHeight - windowHeight);
+          }
+        }
+      };
+      keydownHandler = function(event) {
+        keyMap[event.keyCode] && keyMap[event.keyCode](event);
+      };
+      //register event handler
+      $window.resize(resizeHandler);
+      $window.scroll(windowScrollHandler);
+      $scrollbar.click(clickBarHandler);
+      $scrollbar.dblclick(dblClickHandler);
+      $document.on('mousewheel', mousewheelHandler);
+      $document.keydown(keydownHandler);
+      $bar.dragScroll();
+      //remove default scrollbar
+      $('body').css("overflowY", "hidden");
+      //add our scroll bar
+      $scrollbar.append($bar);
+      $('body').append($scrollbar);
+    }
     //set initial css of scroll bar
     CSSOption = CSSOption || {};
     $scrollbar.css({
@@ -207,18 +224,5 @@
     setTimeout(function() {
       $bar.css("top", $window.height() * $window.scrollTop() / documentHeight + "px");
     }, 100);
-    //register event handler
-    $window.resize(resizeHandler);
-    $window.scroll(windowScrollHandler);
-    $scrollbar.click(clickBarHandler);
-    $scrollbar.dblclick(dblClickHandler);
-    $document.on('mousewheel', mousewheelHandler);
-    $document.keydown(keydownHandler);
-    $bar.dragScroll();
-    //remove default scrollbar
-    $('body').css("overflowY", "hidden");
-    //add our scroll bar
-    $scrollbar.append($bar);
-    $('body').append($scrollbar);
   };
 }(jQuery));
