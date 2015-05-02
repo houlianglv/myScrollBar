@@ -44,3 +44,11 @@ jquery.mousewhell.min.js. A jQuery plugin for support mousewheel event.
     </body>
   </html>
 ```
+
+## Description
+
+You can re-configure the CSS of the scroll bar. Just call .myScrollBar(CSSOption).
+
+It's hard to detect the document height change. You know, if your page's height changes, our scroll bar should also change its height and top attributes.  I did not find a better way than setTimeout func. So in this implementation, I use setTimeout as a workaround to update our scroll bar periodically. 
+
+If your page's height is not enough to overflow, you won't see the scroll bar. But when it begans overflow, our scroll bar would show up.
