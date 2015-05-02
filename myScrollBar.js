@@ -54,7 +54,6 @@
     });
   };
   windowScrollHandler = function(event) {
-    console.log("window scrolled!");
     var windowHeight = $window.height(),
       documentHeight = $document.height();
     $bar.css('top', windowHeight * $window.scrollTop() / documentHeight + 'px');
