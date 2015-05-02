@@ -61,7 +61,7 @@
       windowScrollHandler = function(event) {
         var windowHeight = $window.height(),
           documentHeight = $document.height();
-        $bar.css('top', windowHeight * $window.scrollTop() / documentHeight + 'px');
+        $bar.css('top', 100 * $window.scrollTop() / documentHeight + '%');
       };
       clickBarHandler = function(event) {
         var clickY = event.clientY,
