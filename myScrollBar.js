@@ -44,7 +44,7 @@
       resizeHandler, windowScrollHandler,
       clickBarHandler, dblClickHandler,
       mousewheelHandler, keypressHandler, keyMap,
-      myScrollBar;
+      myScrollBar, updateScrollBar;
 
     if (!isInitialized) {
       isInitialized = true;
@@ -170,14 +170,14 @@
       };
       //a workaround for detecting document height change
       //there is no cross-browser event-based way to listen this change
-      //it does hurt our performance.
+      //it doese hurt our performance.
       var timer = 0,
-        isScrollBarShow = true;
+        isScrollBarShow;
       updateScrollBar = function() {
         var documentHeight = $document.height();
         if (documentHeight !== oldDocumentHeight) {
           if ($window.height() === documentHeight) {
-            $scrollbar.hidden();
+            $scrollbar.hide();
             isScrollBarShow = false;
           } else if ($window.height() < documentHeight) {
             $bar.css({
@@ -207,6 +207,12 @@
       //add our scroll bar
       $scrollbar.append($bar);
       $('body').append($scrollbar);
+      if ($window.height() === $document.height()) {
+        $scrollbar.hide();
+        isScrollBarShow = false;
+      } else {
+        isScrollBarShow = true;
+      }
       timer = setTimeout(updateScrollBar, 300);
     }
     //set initial css of scroll bar
