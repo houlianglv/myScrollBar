@@ -40,6 +40,7 @@
       $document = $(document),
       windowHeight = $window.height(),
       documentHeight = $document.height(),
+      oldDocumentHeight = documentHeight,
       resizeHandler, windowScrollHandler,
       clickBarHandler, dblClickHandler,
       mousewheelHandler, keypressHandler, keyMap,
@@ -167,6 +168,32 @@
       keydownHandler = function(event) {
         keyMap[event.keyCode] && keyMap[event.keyCode](event);
       };
+      //a workaround for detecting document height change
+      //there is no cross-browser event-based way to listen this change
+      //it does hurt our performance.
+      var timer = 0,
+        isScrollBarShow = true;
+      updateScrollBar = function() {
+        var documentHeight = $document.height();
+        if (documentHeight !== oldDocumentHeight) {
+          if ($window.height() === documentHeight) {
+            $scrollbar.remove();
+            isScrollBarShow = false;
+          } else if ($window.height() < documentHeight) {
+            $bar.css({
+              'top': 100 * $window.scrollTop() / documentHeight + '%',
+              'height': 100 * $window.height() / documentHeight + '%'
+            });
+            if (!isScrollBarShow) {
+              $('body').append($scrollbar);
+              isScrollBarShow = true;
+            }
+          }
+          oldDocumentHeight = documentHeight;
+        }
+        clearTimeout(timer);
+        timer = setTimeout(updateScrollBar, 1000);
+      };
       //register event handler
       $window.resize(resizeHandler);
       $window.scroll(windowScrollHandler);
@@ -180,6 +207,7 @@
       //add our scroll bar
       $scrollbar.append($bar);
       $('body').append($scrollbar);
+      timer = setTimeout(updateScrollBar, 300);
     }
     //set initial css of scroll bar
     CSSOption = CSSOption || {};
