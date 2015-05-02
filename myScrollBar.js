@@ -177,7 +177,7 @@
         var documentHeight = $document.height();
         if (documentHeight !== oldDocumentHeight) {
           if ($window.height() === documentHeight) {
-            $scrollbar.remove();
+            $scrollbar.hidden();
             isScrollBarShow = false;
           } else if ($window.height() < documentHeight) {
             $bar.css({
@@ -185,7 +185,7 @@
               'height': 100 * $window.height() / documentHeight + '%'
             });
             if (!isScrollBarShow) {
-              $('body').append($scrollbar);
+              $scrollbar.show();
               isScrollBarShow = true;
             }
           }
