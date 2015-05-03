@@ -1,11 +1,11 @@
 # myScrollBar
 Customize the scroll bar of our web pages!
 
-You can use myScrollBar.js to add your custom scroll bar.
-
 For now, myScrollBar.js is for window scroll bar.
 
 scrollbar.js is for scrollable div element. You can see demo in [this demo page](http://houlianglv.github.io/myscrollbar/demo.html). But still not perfect in IE(<9). You will see some side effects.
+
+Next step would be the intergration of window scroll bar and div scroll bar, to provide an universial interface.
 
 ## Dependencies:
 jQuery 1.x (for IE support).
