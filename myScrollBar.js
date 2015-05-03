@@ -35,7 +35,7 @@
   var isInitialized = false,
     $scrollbar = $("<div class='scrollbar'></div>"),
     $bar = $("<div class='bar'></div>");
-  $.fn.myScrollBar = function(CSSOption) {
+  $.fn.windowScrollBar = function(CSSOption) {
     var $window = $(window),
       $document = $(document),
       windowHeight = $window.height(),
@@ -167,6 +167,8 @@
       };
       keydownHandler = function(event) {
         keyMap[event.keyCode] && keyMap[event.keyCode](event);
+        event.preventDefault();
+        event.stopPropagation();
       };
       //a workaround for detecting document height change
       //there is no cross-browser event-based way to listen this change

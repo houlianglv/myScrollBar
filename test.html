@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Scroll Bar</title>
+    <link rel="stylesheet" type="text/css" href="test.css">
+  </head>
+  <body style="height:2000px">
+    <div class="outer" style="position: relative; overflow:auto; height: 400px; width:600px;">
+      <img src="azusa.jpg" style="position: relative;">
+    </div>
+    <div class="change-size" align="center">
+      <div class="change-height">
+        <span>height</span>
+        <input type="text" id="height" placeholder="400">
+      </div>
+      <div class="change-width">
+        <span>width</span>
+        <input type="text" id="width" placeholder="600">
+      </div>
+      <div class="apply-change">
+        <button class="btn" onclick="changeSize()">Change Size!</button>
+      </div>
+    </div>
+    <script type="text/javascript" src="jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="jquery.mousewheel.min.js"></script>
+    <script type="text/javascript" src="scrollbar.js"></script>
+    <script type="text/javascript">
+      $(function(){
+        $('.outer').myScrollBar();
+      });
+    </script>
+    <script type="text/javascript">
+      function changeSize() {
+        var width = parseInt($("#width").val(), 10);
+        var height = parseInt($("#height").val(), 10);
+        if (isNaN(width)) {
+          width = 600;
+        }
+        if(isNaN(height)){
+          height = 400;
+        }
+        $('.outer').css({
+          height: height + 'px',
+          width: width + 'px'
+        });
+      }
+    </script>
+  </body>
+</html>

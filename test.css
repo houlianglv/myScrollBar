@@ -9,11 +9,6 @@ body {
   font-family: 'Open Sans', sans-serif;
 }
 
-.app{
-  width: 80%;
-  margin: auto;
-}
-
 .outer{
   margin: auto;
   margin-top: 100px;
@@ -21,4 +16,16 @@ body {
 
 .scroll-panel:focus{
   outline: none;
+}
+
+.change-size{
+  margin: auto;
+}
+
+.change-height{
+  margin: 10px;
+}
+
+.change-width{
+  margin: 10px;
 }
