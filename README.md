@@ -15,7 +15,8 @@ jQuery 2.x (cannot support IE < 9).
 jquery.mousewhell.min.js. A jQuery plugin for support mousewheel event.
 
 ## Usage:
-  Example:
+
+### Example for window scroll bar:
 ```html
   <html>
     <head>
@@ -42,7 +43,31 @@ jquery.mousewhell.min.js. A jQuery plugin for support mousewheel event.
         //   barBorderRadius: "5px" //border radius of the bar
         // }
         $(function() {
-          $(window).myScrollBar(CSSOption);
+          $(window).windowScrollBar(CSSOption);
+        });
+      </script>
+    </body>
+  </html>
+```
+### Example for div scroll bar:
+```html
+  <!doctype html>
+  <html>
+    <head>
+      <meta charset="utf-8">
+      <title>Scroll Bar</title>
+      <link rel="stylesheet" type="text/css" href="test.css">
+    </head>
+    <body style="height:2000px">
+      <div class="outer" style="position: relative; overflow:auto; height: 400px; width:600px;">
+        <img src="azusa.jpg" style="position: relative;">
+      </div>
+      <script type="text/javascript" src="jquery-1.11.2.min.js"></script>
+      <script type="text/javascript" src="jquery.mousewheel.min.js"></script>
+      <script type="text/javascript" src="scrollbar.js"></script>
+      <script type="text/javascript">
+        $(function(){
+          $('.outer').myScrollBar();
         });
       </script>
     </body>
